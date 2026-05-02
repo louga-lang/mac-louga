@@ -140,6 +140,15 @@ h1,h2,h3,h4{font-family:'Lora',serif;}
 .chip-achat{background:#fee2e2;color:var(--red);}
 .chip-bon{background:#fef3c7;color:#92400e;}
 
+/* ── Multi-select produits ── */
+.produits-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
+.produit-item{display:flex;align-items:center;gap:8px;padding:9px 10px;
+  border:1.5px solid var(--border);border-radius:10px;cursor:pointer;
+  font-size:12px;color:var(--text);transition:all .15s;user-select:none;}
+.produit-item.selected{border-color:var(--navy);background:#e8f0f8;color:var(--navy);font-weight:700;}
+.produit-item input[type=checkbox]{accent-color:var(--navy);width:15px;height:15px;flex-shrink:0;}
+.produits-selected{margin-top:8px;font-size:12px;color:var(--teal);font-weight:600;min-height:18px;}
+
 /* ── Scroll ── */
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
@@ -466,7 +475,7 @@ function renderFiche(){
         ?'<div class="empty"><p>Aucune transaction pour ce détenu.</p></div>'
         :ficheTxs.map(t=>{
           const isPlus=t.type==='entree';
-          const label=t.type==='entree'?`Entrée · ${t.source||''}${t.expediteur?' · '+t.expediteur:''}`:
+          const label=t.type==='entree'?`Entrée · ${t.source||''}${t.expediteur?' · '+t.expediteur:''}${t.tel?' · 📞'+t.tel:''}`:
                       t.type==='bon'?`Bon · Garde: ${t.gardes||'—'}`:
                       `Achat · ${t.produit||'—'}`;
           return `<div class="row">
@@ -523,6 +532,7 @@ function detenuSelect(id='op-detenu'){
 
 // ── ENTRÉE ─────────────────────────────────────────────────────────────────────
 function renderEntree(){
+  const today=new Date().toISOString().split('T')[0];
   document.getElementById('content').innerHTML=`
     <div class="card">
       <div class="card-title">💰 Entrée d'argent</div>
@@ -536,6 +546,8 @@ function renderEntree(){
         </select>
       </div>
       <div class="field"><label>NOM DE L'EXPÉDITEUR</label><input id="op-exped" type="text" placeholder="Prénom Nom de la personne qui envoie"/></div>
+      <div class="field"><label>TÉLÉPHONE DE L'EXPÉDITEUR</label><input id="op-tel" type="tel" placeholder="ex: 77 123 45 67" inputmode="tel"/></div>
+      <div class="field"><label>DATE DE L'OPÉRATION *</label><input id="op-date" type="date" value="${today}"/></div>
       <div class="field"><label>MONTANT (FCFA) *</label><input id="op-montant" type="number" min="0" placeholder="0" inputmode="numeric"/></div>
       <div class="field"><label>NOTE / OBSERVATIONS</label><textarea id="op-note" placeholder="Informations supplémentaires…"></textarea></div>
       <button class="btn btn-teal" onclick="enregistrerTx('entree')">✓ Enregistrer l'entrée</button>
@@ -545,31 +557,63 @@ function renderEntree(){
 
 // ── ACHAT ──────────────────────────────────────────────────────────────────────
 function renderAchat(){
+  const today=new Date().toISOString().split('T')[0];
   document.getElementById('content').innerHTML=`
     <div class="card">
       <div class="card-title">🛒 Enregistrer un achat</div>
       <div class="field"><label>DÉTENU CONCERNÉ *</label>${detenuSelect()}</div>
-      <div class="field"><label>PRODUIT ACHETÉ *</label>
-        <select id="op-produit">
-          <option value="">— Sélectionner le produit —</option>
-          ${PRODUITS.map(p=>`<option>${p}</option>`).join('')}
-        </select>
+      <div class="field"><label>NOM DE L'ACHETEUR / FAMILLE</label><input id="op-exped" type="text" placeholder="Prénom Nom"/></div>
+      <div class="field"><label>TÉLÉPHONE</label><input id="op-tel" type="tel" placeholder="ex: 77 123 45 67" inputmode="tel"/></div>
+      <div class="field"><label>DATE DE L'ACHAT *</label><input id="op-date" type="date" value="${today}"/></div>
+      <div class="field">
+        <label>PRODUITS ACHETÉS * <span style="color:var(--teal);font-size:11px">(Sélectionnez un ou plusieurs)</span></label>
+        <div id="produits-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+          ${PRODUITS.map(p=>`
+            <label style="display:flex;align-items:center;gap:8px;background:#f8fafc;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;font-size:13px;" onclick="toggleProduit(this)">
+              <span style="width:18px;height:18px;border-radius:4px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;" class="chk-box"></span>
+              ${p}
+              <input type="checkbox" name="produit" value="${p}" style="display:none"/>
+            </label>
+          `).join('')}
+        </div>
       </div>
-      <div class="field"><label>MONTANT (FCFA) *</label><input id="op-montant" type="number" min="0" placeholder="0" inputmode="numeric"/></div>
-      <div class="field"><label>NOTE / OBSERVATIONS</label><textarea id="op-note" placeholder="Détails, quantité…"></textarea></div>
+      <div class="field"><label>MONTANT TOTAL (FCFA) *</label><input id="op-montant" type="number" min="0" placeholder="0" inputmode="numeric"/></div>
+      <div class="field"><label>NOTE / OBSERVATIONS</label><textarea id="op-note" placeholder="Détails, quantités…"></textarea></div>
       <button class="btn btn-navy" onclick="enregistrerTx('achat')">✓ Enregistrer l'achat</button>
     </div>
   `;
 }
 
+function toggleProduit(label){
+  const chk=label.querySelector('input[type=checkbox]');
+  const box=label.querySelector('.chk-box');
+  chk.checked=!chk.checked;
+  if(chk.checked){
+    label.style.borderColor='var(--teal)';
+    label.style.background='#e8f4f3';
+    box.style.background='var(--teal)';
+    box.style.borderColor='var(--teal)';
+    box.textContent='✓';
+    box.style.color='#fff';
+  } else {
+    label.style.borderColor='var(--border)';
+    label.style.background='#f8fafc';
+    box.style.background='';
+    box.style.borderColor='var(--border)';
+    box.textContent='';
+  }
+}
+
 // ── BON ────────────────────────────────────────────────────────────────────────
 function renderBon(){
+  const today=new Date().toISOString().split('T')[0];
   document.getElementById('content').innerHTML=`
     <div class="card">
       <div class="card-title">📨 Envoi de Bon (via garde)</div>
       <p style="color:var(--muted);font-size:13px;margin-bottom:16px">L'argent est remis au garde qui le transmet au détenu.</p>
       <div class="field"><label>DÉTENU CONCERNÉ *</label>${detenuSelect()}</div>
       <div class="field"><label>NOM DU GARDE RÉCEPTEUR</label><input id="op-gardes" type="text" placeholder="Nom du garde"/></div>
+      <div class="field"><label>DATE DU BON *</label><input id="op-date" type="date" value="${today}"/></div>
       <div class="field"><label>MONTANT (FCFA) *</label><input id="op-montant" type="number" min="0" placeholder="0" inputmode="numeric"/></div>
       <div class="field"><label>NOTE / OBSERVATIONS</label><textarea id="op-note" placeholder="Informations complémentaires…"></textarea></div>
       <button class="btn btn-gold" onclick="enregistrerTx('bon')">✓ Enregistrer le bon</button>
@@ -583,27 +627,41 @@ function enregistrerTx(type){
   const note = document.getElementById('op-note')?.value||'';
   const source = document.getElementById('op-source')?.value||'';
   const expediteur = document.getElementById('op-exped')?.value||'';
-  const produit = document.getElementById('op-produit')?.value||'';
+  const tel = document.getElementById('op-tel')?.value||'';
   const gardes = document.getElementById('op-gardes')?.value||'';
+  const opDate = document.getElementById('op-date')?.value||'';
   const montant = parseFloat(montantRaw);
+
+  // Multi-produits pour achat
+  let produit = '';
+  if(type==='achat'){
+    const checked=[...document.querySelectorAll('input[name="produit"]:checked')].map(c=>c.value);
+    produit = checked.join(', ');
+  }
 
   if(!detenuId){toast('Sélectionnez un détenu','error');return;}
   if(!montant||montant<=0){toast('Montant invalide','error');return;}
   if(type==='entree'&&!source){toast('Sélectionnez la source','error');return;}
-  if(type==='achat'&&!produit){toast('Sélectionnez un produit','error');return;}
+  if(type==='achat'&&!produit){toast('Sélectionnez au moins un produit','error');return;}
 
   // Vérifier solde suffisant pour achat/bon
   if(type==='achat'||type==='bon'){
     const s=solde(detenuId);
     if(montant>s){
-      const d=getDetenu(detenuId);
-      toast(`⚠ Solde insuffisant (${fmt(s)})`,  'error');
-      // On continue quand même (peut être à crédit)
+      toast(`⚠ Solde insuffisant (${fmt(s)})`,'error');
     }
   }
 
+  // Utiliser la date choisie si disponible
+  let dateInfo = nowStr();
+  if(opDate){
+    const d=new Date(opDate);
+    dateInfo.date=d.toLocaleDateString('fr-SN',{day:'2-digit',month:'2-digit',year:'numeric'});
+    dateInfo.dateRaw=d.toISOString();
+  }
+
   const txs=DB.txs;
-  txs.unshift({id:uid(),prisonnierId:detenuId,type,montant,note,source,expediteur,produit,gardes,...nowStr()});
+  txs.unshift({id:uid(),prisonnierId:detenuId,type,montant,note,source,expediteur,tel,produit,gardes,...dateInfo});
   DB.txs=txs;
 
   const msgs={entree:'✓ Entrée enregistrée !',achat:'✓ Achat enregistré !',bon:'✓ Bon enregistré !'};
@@ -624,7 +682,7 @@ function renderHistorique(){
           const isPlus=t.type==='entree';
           const typeLabel=t.type==='entree'?'Entrée':t.type==='bon'?'Bon':'Achat';
           const typeClass=t.type==='entree'?'chip-entree':t.type==='bon'?'chip-bon':'chip-achat';
-          const detail=t.type==='entree'?`${t.source||''}${t.expediteur?' · '+t.expediteur:''}`:
+          const detail=t.type==='entree'?`${t.source||''}${t.expediteur?' · '+t.expediteur:''}${t.tel?' · 📞'+t.tel:''}`:
                        t.type==='bon'?`Garde: ${t.gardes||'—'}`:t.produit||'—';
           return `<div class="row">
             <div style="flex:1;min-width:0">
