@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="MAC Louga"/>
+<meta name="theme-color" content="#1e3a5f"/>
+<title>MAC Louga — Idrissa Diagne</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --navy:#1e3a5f;--teal:#0d7a6e;--gold:#c8952a;--red:#991b1b;--green:#065f46;
+  --bg:#f0f4f8;--card:#fff;--border:#d1dce8;--text:#1a2a3a;--muted:#6b7f93;
+  --light:#e8f4f3;--safe-bottom:env(safe-area-inset-bottom,0px);
+}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);
+  min-height:100vh;max-width:480px;margin:0 auto;position:relative;}
+h1,h2,h3,h4{font-family:'Lora',serif;}
+
+/* ── Header ── */
+#header{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;
+  background:var(--navy);z-index:100;padding:14px 18px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 2px 12px rgba(0,0,0,.25);}
+#header-title{font-family:'Lora',serif;color:#fff;font-size:16px;font-weight:700;line-height:1.2;}
+#header-sub{font-size:10px;color:#93b4d4;font-weight:400;}
+#header-badge{background:var(--gold);color:#fff;font-size:10px;font-weight:700;
+  padding:3px 8px;border-radius:20px;letter-spacing:.5px;}
+#back-btn{background:none;border:none;color:#93b4d4;font-size:22px;cursor:pointer;padding:4px 8px 4px 0;display:none;}
+
+/* ── Bottom nav ── */
+#botnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;
+  background:var(--navy);display:flex;z-index:100;
+  padding-bottom:var(--safe-bottom);border-top:1px solid rgba(255,255,255,.1);}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:10px 4px 8px;border:none;background:none;cursor:pointer;color:#93b4d4;
+  font-size:10px;font-family:'Source Sans 3',sans-serif;gap:3px;transition:color .2s;}
+.nav-btn.active{color:var(--gold);}
+.nav-btn svg{display:block;}
+.nav-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);margin-top:2px;opacity:0;}
+.nav-btn.active .nav-dot{opacity:1;}
+
+/* ── Content ── */
+#content{padding:74px 16px 90px;min-height:100vh;}
+
+/* ── Cards ── */
+.card{background:var(--card);border-radius:14px;padding:18px;border:1px solid var(--border);margin-bottom:14px;}
+.card-title{font-family:'Lora',serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px;}
+
+/* ── Stats grid ── */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.stat-card{border-radius:12px;padding:14px;color:#fff;}
+.stat-card.navy{background:var(--navy);}
+.stat-card.teal{background:var(--teal);}
+.stat-card.gold{background:var(--gold);}
+.stat-card.red{background:#7f1d1d;}
+.stat-label{font-size:11px;opacity:.8;margin-bottom:4px;}
+.stat-value{font-family:'Lora',serif;font-size:22px;font-weight:700;}
+.stat-full{grid-column:1/-1;}
+
+/* ── Form ── */
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600;letter-spacing:.3px;}
+.field input,.field select,.field textarea{
+  width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid var(--border);
+  font-family:'Source Sans 3',sans-serif;font-size:14px;color:var(--text);
+  background:#fff;outline:none;transition:border-color .2s;appearance:none;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--teal);}
+.field textarea{resize:vertical;min-height:70px;}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7f93' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;}
+
+/* ── Buttons ── */
+.btn{width:100%;padding:13px;border-radius:10px;border:none;cursor:pointer;
+  font-family:'Lora',serif;font-size:15px;font-weight:700;transition:opacity .2s;letter-spacing:.3px;}
+.btn:active{opacity:.8;}
+.btn-teal{background:var(--teal);color:#fff;}
+.btn-navy{background:var(--navy);color:#fff;}
+.btn-gold{background:var(--gold);color:#fff;}
+.btn-red{background:#991b1b;color:#fff;}
+.btn-outline{background:none;border:1.5px solid var(--border);color:var(--muted);}
+.btn-sm{padding:7px 12px;font-size:12px;border-radius:8px;width:auto;}
+
+/* ── List rows ── */
+.row{display:flex;justify-content:space-between;align-items:center;
+  padding:11px 0;border-bottom:1px solid var(--border);}
+.row:last-child{border-bottom:none;}
+.row-title{font-family:'Lora',serif;font-size:14px;font-weight:600;color:var(--text);}
+.row-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.amount-plus{font-weight:700;font-size:15px;color:var(--green);}
+.amount-minus{font-weight:700;font-size:15px;color:var(--red);}
+
+/* ── Badge ── */
+.badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:12px;letter-spacing:.3px;}
+.badge-green{background:#d1fae5;color:var(--green);}
+.badge-red{background:#fee2e2;color:var(--red);}
+.badge-amber{background:#fef3c7;color:#92400e;}
+.badge-blue{background:#dbeafe;color:#1e40af;}
+
+/* ── Toast ── */
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--teal);color:#fff;padding:12px 20px;border-radius:12px;
+  font-size:13px;font-weight:600;z-index:999;opacity:0;transition:all .3s;
+  white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.2);}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#toast.error{background:#991b1b;}
+
+/* ── Modal ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#fff;border-radius:20px 20px 0 0;padding:22px 18px 30px;width:100%;
+  max-height:60vh;overflow-y:auto;animation:slideUp .25s ease;}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-title{font-family:'Lora',serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:16px;}
+
+/* ── Fiche header ── */
+.fiche-hero{background:linear-gradient(135deg,var(--navy) 0%,#2d5a8e 100%);
+  border-radius:14px;padding:20px;color:#fff;margin-bottom:14px;
+  box-shadow:0 8px 24px rgba(30,58,95,.3);}
+.fiche-name{font-family:'Lora',serif;font-size:20px;font-weight:700;margin-bottom:4px;}
+.fiche-solde-label{font-size:11px;opacity:.7;margin-top:10px;}
+.fiche-solde{font-family:'Lora',serif;font-size:32px;font-weight:700;margin-top:2px;}
+
+/* ── Empty state ── */
+.empty{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty svg{margin:0 auto 12px;display:block;opacity:.3;}
+.empty p{font-size:14px;}
+
+/* ── Divider ── */
+.divider{height:1px;background:var(--border);margin:4px 0;}
+
+/* ── Icon chip ── */
+.type-chip{font-size:11px;padding:2px 8px;border-radius:6px;font-weight:600;}
+.chip-entree{background:#d1fae5;color:var(--green);}
+.chip-achat{background:#fee2e2;color:var(--red);}
+.chip-bon{background:#fef3c7;color:#92400e;}
+
+/* ── Scroll ── */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#c8d8e8;border-radius:4px;}
+
+/* ── Animations ── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-anim{animation:fadeIn .2s ease;}
+
+/* ── Confirm overlay ── */
+#confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;
+  display:none;align-items:center;justify-content:center;padding:20px;}
+#confirm-overlay.open{display:flex;}
+.confirm-box{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:320px;text-align:center;}
+.confirm-msg{font-size:15px;color:var(--text);margin-bottom:20px;line-height:1.5;}
+.confirm-btns{display:flex;gap:10px;}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div id="header">
+  <div style="display:flex;align-items:center;gap:10px">
+    <button id="back-btn" onclick="goBack()">←</button>
+    <div>
+      <div id="header-title">MAC Louga</div>
+      <div id="header-sub">Idrissa Diagne · Intermédiaire Social</div>
+    </div>
+  </div>
+  <div id="header-badge">LOUGA</div>
+</div>
+
+<!-- Content -->
+<div id="content"></div>
+
+<!-- Bottom nav -->
+<div id="botnav">
+  <button class="nav-btn active" onclick="navigate('dashboard')" id="nav-dashboard">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Accueil
+    <div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" onclick="navigate('detenus')" id="nav-detenus">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+    Détenus
+    <div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" onclick="navigate('operations')" id="nav-operations">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    Opération
+    <div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" onclick="navigate('historique')" id="nav-historique">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Historique
+    <div class="nav-dot"></div>
+  </button>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Confirm modal -->
+<div id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="confirm-btns">
+      <button class="btn btn-outline" style="flex:1" onclick="closeConfirm(false)">Annuler</button>
+      <button class="btn btn-red" style="flex:1" id="confirm-ok-btn" onclick="closeConfirm(true)">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Data ───────────────────────────────────────────────────────────────────────
+const DB = {
+  get detenus(){ try{ return JSON.parse(localStorage.getItem('mac_detenus')||'[]'); }catch{ return []; } },
+  set detenus(v){ localStorage.setItem('mac_detenus',JSON.stringify(v)); },
+  get txs(){ try{ return JSON.parse(localStorage.getItem('mac_txs')||'[]'); }catch{ return []; } },
+  set txs(v){ localStorage.setItem('mac_txs',JSON.stringify(v)); },
+};
+
+// ── Utils ──────────────────────────────────────────────────────────────────────
+const uid = ()=>Math.random().toString(36).slice(2,9);
+const fmt = n=>new Intl.NumberFormat('fr-SN',{style:'currency',currency:'XOF',maximumFractionDigits:0}).format(n||0);
+const nowStr = ()=>{
+  const d=new Date();
+  return {
+    date: d.toLocaleDateString('fr-SN',{day:'2-digit',month:'2-digit',year:'numeric'}),
+    heure: d.toLocaleTimeString('fr-SN',{hour:'2-digit',minute:'2-digit'}),
+    dateRaw: d.toISOString()
+  };
+};
+const solde = (did)=>{
+  return DB.txs.filter(t=>t.prisonnierId===did).reduce((a,t)=>{
+    if(t.type==='entree') return a+t.montant;
+    if(t.type==='achat'||t.type==='bon') return a-t.montant;
+    return a;
+  },0);
+};
+const getDetenu = id=>DB.detenus.find(d=>d.id===id);
+
+const PRODUITS=[
+  'Cigarettes/Malboro','Lait','Sucre','Savon','Diampé','Lait de corps',
+  'Laine/Rab daal','Couscous','Chaussures','Parfum','Vêtements',
+  'Fast-food','Boisson','Bissap','Couscous sèche','Autres'
+];
+
+// ── Navigation ─────────────────────────────────────────────────────────────────
+let currentPage = 'dashboard';
+let pageStack = [];
+let currentDetenuId = null;
+
+function navigate(page, detenuId=null, pushStack=true){
+  if(pushStack && currentPage !== page) pageStack.push(currentPage);
+  currentPage = page;
+  if(detenuId) currentDetenuId = detenuId;
+
+  // Update nav
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const navMap = {dashboard:'nav-dashboard',detenus:'nav-detenus',operations:'nav-operations',historique:'nav-historique'};
+  const navKey = ['fiche','entree','achat','bon'].includes(page)?null:navMap[page];
+  if(navKey) document.getElementById(navKey)?.classList.add('active');
+
+  // Back button
+  const showBack = ['fiche','entree','achat','bon'].includes(page);
+  document.getElementById('back-btn').style.display = showBack?'block':'none';
+
+  render();
+}
+
+function goBack(){
+  if(pageStack.length>0){
+    const prev = pageStack.pop();
+    navigate(prev, null, false);
+  } else { navigate('dashboard', null, false); }
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, type='ok'){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show' + (type==='error'?' error':'');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.className='', 2800);
+}
+
+// ── Confirm ────────────────────────────────────────────────────────────────────
+let confirmResolve;
+function confirm2(msg){ return new Promise(res=>{ confirmResolve=res; document.getElementById('confirm-msg').textContent=msg; document.getElementById('confirm-overlay').classList.add('open'); }); }
+function closeConfirm(ok){ document.getElementById('confirm-overlay').classList.remove('open'); confirmResolve&&confirmResolve(ok); }
+
+// ── Render ─────────────────────────────────────────────────────────────────────
+function render(){
+  const c = document.getElementById('content');
+  c.innerHTML = '';
+  c.className = 'page-anim';
+
+  const pages = {
+    dashboard: renderDashboard,
+    detenus:   renderDetenus,
+    fiche:     renderFiche,
+    operations:renderOperations,
+    entree:    renderEntree,
+    achat:     renderAchat,
+    bon:       renderBon,
+    historique:renderHistorique,
+  };
+  (pages[currentPage]||renderDashboard)();
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────────────
+function renderDashboard(){
+  const detenus = DB.detenus;
+  const txs = DB.txs;
+  const totalArgent = detenus.reduce((s,d)=>s+Math.max(solde(d.id),0),0);
+  const thisMonth = new Date().getMonth();
+  const txsMois = txs.filter(t=>t.dateRaw&&new Date(t.dateRaw).getMonth()===thisMonth).length;
+
+  const c = document.getElementById('content');
+  c.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-card navy">
+        <div class="stat-label">Détenus suivis</div>
+        <div class="stat-value">${detenus.length}</div>
+      </div>
+      <div class="stat-card teal">
+        <div class="stat-label">Argent en gestion</div>
+        <div class="stat-value" style="font-size:16px">${fmt(totalArgent)}</div>
+      </div>
+      <div class="stat-card gold stat-full">
+        <div class="stat-label">Transactions ce mois</div>
+        <div class="stat-value">${txsMois} opération${txsMois!==1?'s':''}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💰 Soldes des détenus</div>
+      ${detenus.length===0
+        ?'<div class="empty"><p>Aucun détenu enregistré.<br>Allez dans <b>Détenus</b> pour commencer.</p></div>'
+        :detenus.map(d=>{
+          const s=solde(d.id);
+          return `<div class="row" onclick="navigate('fiche','${d.id}')" style="cursor:pointer">
+            <div>
+              <div class="row-title">${d.prenom} ${d.nom}</div>
+              <div class="row-sub">Cellule ${d.cellule||'—'}</div>
+            </div>
+            <span class="badge ${s<0?'badge-red':s===0?'badge-amber':'badge-green'}">${fmt(s)}</span>
+          </div>`;
+        }).join('')}
+    </div>
+
+    <div class="card">
+      <div class="card-title">🕐 Dernières transactions</div>
+      ${txs.length===0
+        ?'<div class="empty"><p>Aucune transaction.</p></div>'
+        :txs.slice(0,6).map(t=>{
+          const d=getDetenu(t.prisonnierId);
+          const isPlus=t.type==='entree';
+          return `<div class="row">
+            <div>
+              <div class="row-title">${d?`${d.prenom} ${d.nom}`:'—'}</div>
+              <div class="row-sub">${t.type==='entree'?`Entrée · ${t.source||''}`:t.type==='bon'?'Bon envoyé':`Achat · ${t.produit||''}`} · ${t.date}</div>
+            </div>
+            <span class="${isPlus?'amount-plus':'amount-minus'}">${isPlus?'+':'−'}${fmt(t.montant)}</span>
+          </div>`;
+        }).join('')}
+    </div>
+  `;
+}
+
+// ── DÉTENUS ────────────────────────────────────────────────────────────────────
+function renderDetenus(){
+  const detenus = DB.detenus;
+  const c = document.getElementById('content');
+  c.innerHTML = `
+    <div class="card">
+      <div class="card-title">➕ Ajouter un détenu</div>
+      <div class="field"><label>NOM *</label><input id="f-nom" type="text" placeholder="Nom de famille"/></div>
+      <div class="field"><label>PRÉNOM *</label><input id="f-prenom" type="text" placeholder="Prénom"/></div>
+      <div class="field"><label>NUMÉRO DE CELLULE</label><input id="f-cellule" type="text" placeholder="ex: 12"/></div>
+      <div class="field"><label>DATE D'ENTRÉE</label><input id="f-date" type="date"/></div>
+      <button class="btn btn-teal" onclick="ajouterDetenu()">+ Enregistrer le détenu</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">👥 ${detenus.length} détenu${detenus.length!==1?'s':''} enregistré${detenus.length!==1?'s':''}</div>
+      ${detenus.length===0
+        ?'<div class="empty"><p>Aucun détenu pour l\'instant.</p></div>'
+        :detenus.map(d=>{
+          const s=solde(d.id);
+          return `<div class="row">
+            <div onclick="navigate('fiche','${d.id}')" style="cursor:pointer;flex:1">
+              <div class="row-title">${d.prenom} ${d.nom}</div>
+              <div class="row-sub">Cellule ${d.cellule||'—'} · Solde : <b>${fmt(s)}</b></div>
+            </div>
+            <div style="display:flex;gap:8px;margin-left:8px">
+              <button class="btn btn-sm btn-teal" onclick="navigate('fiche','${d.id}')">Voir</button>
+              <button class="btn btn-sm btn-red" onclick="supprimerDetenu('${d.id}')">✕</button>
+            </div>
+          </div>`;
+        }).join('')}
+    </div>
+  `;
+}
+
+async function ajouterDetenu(){
+  const nom=document.getElementById('f-nom').value.trim();
+  const prenom=document.getElementById('f-prenom').value.trim();
+  if(!nom||!prenom){toast('Nom et prénom requis','error');return;}
+  const cellule=document.getElementById('f-cellule').value.trim();
+  const dateEntree=document.getElementById('f-date').value;
+  const detenus=DB.detenus;
+  detenus.unshift({id:uid(),nom,prenom,cellule,dateEntree,...nowStr()});
+  DB.detenus=detenus;
+  toast('✓ Détenu ajouté !');
+  render();
+}
+
+async function supprimerDetenu(id){
+  const d=getDetenu(id);
+  const ok=await confirm2(`Supprimer ${d?d.prenom+' '+d.nom:'ce détenu'} ?\nToutes ses transactions seront effacées.`);
+  if(!ok) return;
+  DB.detenus=DB.detenus.filter(x=>x.id!==id);
+  DB.txs=DB.txs.filter(t=>t.prisonnierId!==id);
+  toast('Détenu supprimé','error');
+  render();
+}
+
+// ── FICHE ──────────────────────────────────────────────────────────────────────
+function renderFiche(){
+  const d=getDetenu(currentDetenuId);
+  if(!d){document.getElementById('content').innerHTML='<div class="empty"><p>Détenu introuvable.</p></div>';return;}
+  const s=solde(d.id);
+  const ficheTxs=DB.txs.filter(t=>t.prisonnierId===d.id);
+  const totalRecu=ficheTxs.filter(t=>t.type==='entree').reduce((a,t)=>a+t.montant,0);
+  const totalAchats=ficheTxs.filter(t=>t.type==='achat').reduce((a,t)=>a+t.montant,0);
+  const totalBons=ficheTxs.filter(t=>t.type==='bon').reduce((a,t)=>a+t.montant,0);
+
+  document.getElementById('content').innerHTML = `
+    <div class="fiche-hero">
+      <div class="fiche-name">${d.prenom} ${d.nom}</div>
+      <div style="font-size:12px;opacity:.7">Cellule ${d.cellule||'—'} · Entrée : ${d.dateEntree||'—'}</div>
+      <div class="fiche-solde-label">SOLDE DISPONIBLE</div>
+      <div class="fiche-solde">${fmt(s)}</div>
+    </div>
+
+    <div class="stat-grid" style="margin-bottom:14px">
+      <div class="stat-card teal"><div class="stat-label">Total reçu</div><div class="stat-value" style="font-size:17px">${fmt(totalRecu)}</div></div>
+      <div class="stat-card red"><div class="stat-label">Total achats</div><div class="stat-value" style="font-size:17px">${fmt(totalAchats)}</div></div>
+      <div class="stat-card gold stat-full"><div class="stat-label">Total bons envoyés</div><div class="stat-value" style="font-size:17px">${fmt(totalBons)}</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+      <button class="btn btn-teal" style="font-size:12px;padding:10px 6px" onclick="navigate('entree',null);document.getElementById('op-detenu').value='${d.id}'">+ Argent</button>
+      <button class="btn btn-navy" style="font-size:12px;padding:10px 6px" onclick="navigate('achat',null);document.getElementById('op-detenu').value='${d.id}'">🛒 Achat</button>
+      <button class="btn btn-gold" style="font-size:12px;padding:10px 6px" onclick="navigate('bon',null);document.getElementById('op-detenu').value='${d.id}'">📨 Bon</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 Historique — ${ficheTxs.length} opération${ficheTxs.length!==1?'s':''}</div>
+      ${ficheTxs.length===0
+        ?'<div class="empty"><p>Aucune transaction pour ce détenu.</p></div>'
+        :ficheTxs.map(t=>{
+          const isPlus=t.type==='entree';
+          const label=t.type==='entree'?`Entrée · ${t.source||''}${t.expediteur?' · '+t.expediteur:''}`:
+                      t.type==='bon'?`Bon · Garde: ${t.gardes||'—'}`:
+                      `Achat · ${t.produit||'—'}`;
+          return `<div class="row">
+            <div style="flex:1">
+              <div class="row-title" style="font-size:13px">${label}</div>
+              <div class="row-sub">${t.date} à ${t.heure}${t.note?' · '+t.note:''}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="${isPlus?'amount-plus':'amount-minus'}">${isPlus?'+':'−'}${fmt(t.montant)}</span>
+              <button onclick="supprimerTx('${t.id}')" style="border:none;background:none;color:#ccc;cursor:pointer;font-size:16px;padding:2px">✕</button>
+            </div>
+          </div>`;
+        }).join('')}
+    </div>
+  `;
+}
+
+async function supprimerTx(id){
+  const ok=await confirm2('Supprimer cette transaction ?');
+  if(!ok) return;
+  DB.txs=DB.txs.filter(t=>t.id!==id);
+  toast('Transaction supprimée','error');
+  render();
+}
+
+// ── OPÉRATIONS (Hub) ───────────────────────────────────────────────────────────
+function renderOperations(){
+  document.getElementById('content').innerHTML=`
+    <div class="card" style="text-align:center;padding:28px 18px">
+      <div class="card-title" style="margin-bottom:6px;font-size:17px">Choisissez une opération</div>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:24px">Que voulez-vous enregistrer ?</p>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <button class="btn btn-teal" onclick="navigate('entree')" style="font-size:16px;padding:16px">
+          💰&nbsp;&nbsp;Entrée d'argent
+        </button>
+        <button class="btn btn-navy" onclick="navigate('achat')" style="font-size:16px;padding:16px">
+          🛒&nbsp;&nbsp;Enregistrer un achat
+        </button>
+        <button class="btn btn-gold" onclick="navigate('bon')" style="font-size:16px;padding:16px">
+          📨&nbsp;&nbsp;Envoi de Bon (via garde)
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// ── Sélecteur de détenu commun ─────────────────────────────────────────────────
+function detenuSelect(id='op-detenu'){
+  return `<select id="${id}">
+    <option value="">— Sélectionner un détenu —</option>
+    ${DB.detenus.map(d=>`<option value="${d.id}">${d.prenom} ${d.nom} · Solde: ${fmt(solde(d.id))}</option>`).join('')}
+  </select>`;
+}
+
+// ── ENTRÉE ─────────────────────────────────────────────────────────────────────
+function renderEntree(){
+  document.getElementById('content').innerHTML=`
+    <div class="card">
+      <div class="card-title">💰 Entrée d'argent</div>
+      <div class="field"><label>DÉTENU CONCERNÉ *</label>${detenuSelect()}</div>
+      <div class="field"><label>SOURCE *</label>
+        <select id="op-source">
+          <option value="">— Sélectionner la source —</option>
+          <option>Famille du détenu</option>
+          <option>Le détenu lui-même (employé prison)</option>
+          <option>Gardé pour le détenu</option>
+        </select>
+      </div>
+      <div class="field"><label>NOM DE L'EXPÉDITEUR</label><input id="op-exped" type="text" placeholder="Prénom Nom de la personne qui envoie"/></div>
+      <div class="field"><label>MONTANT (FCFA) *</label><input id="op-montant" type="number" min="0" placeholder="0" inputmode="numeric"/></div>
+      <div class="field"><label>NOTE / OBSERVATIONS</label><textarea id="op-note" placeholder="Informations supplémentaires…"></textarea></div>
+      <button class="btn btn-teal" onclick="enregistrerTx('entree')">✓ Enregistrer l'entrée</button>
+    </div>
+  `;
+}
+
+// ── ACHAT ──────────────────────────────────────────────────────────────────────
+function renderAchat(){
+  document.getElementById('content').innerHTML=`
+    <div class="card">
+      <div class="card-title">🛒 Enregistrer un achat</div>
+      <div class="field"><label>DÉTENU CONCERNÉ *</label>${detenuSelect()}</div>
+      <div class="field"><label>PRODUIT ACHETÉ *</label>
+        <select id="op-produit">
+          <option value="">— Sélectionner le produit —</option>
+          ${PRODUITS.map(p=>`<option>${p}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label>MONTANT (FCFA) *</label><input id="op-montant" type="number" min="0" placeholder="0" inputmode="numeric"/></div>
+      <div class="field"><label>NOTE / OBSERVATIONS</label><textarea id="op-note" placeholder="Détails, quantité…"></textarea></div>
+      <button class="btn btn-navy" onclick="enregistrerTx('achat')">✓ Enregistrer l'achat</button>
+    </div>
+  `;
+}
+
+// ── BON ────────────────────────────────────────────────────────────────────────
+function renderBon(){
+  document.getElementById('content').innerHTML=`
+    <div class="card">
+      <div class="card-title">📨 Envoi de Bon (via garde)</div>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:16px">L'argent est remis au garde qui le transmet au détenu.</p>
+      <div class="field"><label>DÉTENU CONCERNÉ *</label>${detenuSelect()}</div>
+      <div class="field"><label>NOM DU GARDE RÉCEPTEUR</label><input id="op-gardes" type="text" placeholder="Nom du garde"/></div>
+      <div class="field"><label>MONTANT (FCFA) *</label><input id="op-montant" type="number" min="0" placeholder="0" inputmode="numeric"/></div>
+      <div class="field"><label>NOTE / OBSERVATIONS</label><textarea id="op-note" placeholder="Informations complémentaires…"></textarea></div>
+      <button class="btn btn-gold" onclick="enregistrerTx('bon')">✓ Enregistrer le bon</button>
+    </div>
+  `;
+}
+
+function enregistrerTx(type){
+  const detenuId = document.getElementById('op-detenu')?.value;
+  const montantRaw = document.getElementById('op-montant')?.value;
+  const note = document.getElementById('op-note')?.value||'';
+  const source = document.getElementById('op-source')?.value||'';
+  const expediteur = document.getElementById('op-exped')?.value||'';
+  const produit = document.getElementById('op-produit')?.value||'';
+  const gardes = document.getElementById('op-gardes')?.value||'';
+  const montant = parseFloat(montantRaw);
+
+  if(!detenuId){toast('Sélectionnez un détenu','error');return;}
+  if(!montant||montant<=0){toast('Montant invalide','error');return;}
+  if(type==='entree'&&!source){toast('Sélectionnez la source','error');return;}
+  if(type==='achat'&&!produit){toast('Sélectionnez un produit','error');return;}
+
+  // Vérifier solde suffisant pour achat/bon
+  if(type==='achat'||type==='bon'){
+    const s=solde(detenuId);
+    if(montant>s){
+      const d=getDetenu(detenuId);
+      toast(`⚠ Solde insuffisant (${fmt(s)})`,  'error');
+      // On continue quand même (peut être à crédit)
+    }
+  }
+
+  const txs=DB.txs;
+  txs.unshift({id:uid(),prisonnierId:detenuId,type,montant,note,source,expediteur,produit,gardes,...nowStr()});
+  DB.txs=txs;
+
+  const msgs={entree:'✓ Entrée enregistrée !',achat:'✓ Achat enregistré !',bon:'✓ Bon enregistré !'};
+  toast(msgs[type]);
+  navigate('fiche',detenuId);
+}
+
+// ── HISTORIQUE ─────────────────────────────────────────────────────────────────
+function renderHistorique(){
+  const txs=DB.txs;
+  document.getElementById('content').innerHTML=`
+    <div class="card" style="padding:14px">
+      <div class="card-title">📋 Historique général — ${txs.length} opération${txs.length!==1?'s':''}</div>
+      ${txs.length===0
+        ?'<div class="empty"><p>Aucune transaction enregistrée.</p></div>'
+        :txs.map(t=>{
+          const d=getDetenu(t.prisonnierId);
+          const isPlus=t.type==='entree';
+          const typeLabel=t.type==='entree'?'Entrée':t.type==='bon'?'Bon':'Achat';
+          const typeClass=t.type==='entree'?'chip-entree':t.type==='bon'?'chip-bon':'chip-achat';
+          const detail=t.type==='entree'?`${t.source||''}${t.expediteur?' · '+t.expediteur:''}`:
+                       t.type==='bon'?`Garde: ${t.gardes||'—'}`:t.produit||'—';
+          return `<div class="row">
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                <span class="type-chip ${typeClass}">${typeLabel}</span>
+                <span class="row-title" style="font-size:13px">${d?d.prenom+' '+d.nom:'—'}</span>
+              </div>
+              <div class="row-sub">${detail}</div>
+              <div class="row-sub">${t.date} à ${t.heure}${t.note?' · '+t.note:''}</div>
+            </div>
+            <span class="${isPlus?'amount-plus':'amount-minus'}" style="margin-left:8px;white-space:nowrap">${isPlus?'+':'−'}${fmt(t.montant)}</span>
+          </div>`;
+        }).join('')}
+    </div>
+  `;
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
