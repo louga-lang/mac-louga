@@ -206,6 +206,11 @@ h1,h2,h3,h4{font-family:'Lora',serif;}
     Historique
     <div class="nav-dot"></div>
   </button>
+  <button class="nav-btn" onclick="navigate('sauvegarde')" id="nav-sauvegarde">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Sauvegarde
+    <div class="nav-dot"></div>
+  </button>
 </div>
 
 <!-- Toast -->
@@ -269,7 +274,7 @@ function navigate(page, detenuId=null, pushStack=true){
 
   // Update nav
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const navMap = {dashboard:'nav-dashboard',detenus:'nav-detenus',operations:'nav-operations',historique:'nav-historique'};
+  const navMap = {dashboard:'nav-dashboard',detenus:'nav-detenus',operations:'nav-operations',historique:'nav-historique',sauvegarde:'nav-sauvegarde'};
   const navKey = ['fiche','entree','achat','bon'].includes(page)?null:navMap[page];
   if(navKey) document.getElementById(navKey)?.classList.add('active');
 
@@ -317,6 +322,7 @@ function render(){
     achat:     renderAchat,
     bon:       renderBon,
     historique:renderHistorique,
+    sauvegarde:renderSauvegarde,
   };
   (pages[currentPage]||renderDashboard)();
 }
@@ -698,6 +704,89 @@ function renderHistorique(){
         }).join('')}
     </div>
   `;
+}
+
+// ── SAUVEGARDE ─────────────────────────────────────────────────────────────────
+function renderSauvegarde(){
+  const detenus=DB.detenus;
+  const txs=DB.txs;
+  const dateStr=new Date().toLocaleDateString('fr-SN');
+  document.getElementById('content').innerHTML=`
+    <div class="card" style="text-align:center;padding:28px 18px;margin-bottom:14px">
+      <div style="font-size:48px;margin-bottom:12px">💾</div>
+      <div class="card-title" style="font-size:18px;margin-bottom:8px">Sauvegarde des données</div>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:6px">
+        <b>${detenus.length}</b> détenu(s) · <b>${txs.length}</b> transaction(s)
+      </p>
+      <p style="color:var(--muted);font-size:12px;margin-bottom:24px">Dernière sauvegarde : ${dateStr}</p>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <button class="btn btn-teal" onclick="exporterDonnees()" style="font-size:15px;padding:15px">
+          📤&nbsp;&nbsp;Exporter — Télécharger la sauvegarde
+        </button>
+        <button class="btn btn-navy" onclick="document.getElementById('import-input').click()" style="font-size:15px;padding:15px">
+          📥&nbsp;&nbsp;Importer — Restaurer une sauvegarde
+        </button>
+        <input type="file" id="import-input" accept=".json" style="display:none" onchange="importerDonnees(this)"/>
+      </div>
+    </div>
+
+    <div class="card" style="background:#fef9ec;border-color:#f0d080">
+      <div style="font-size:13px;color:#92400e;line-height:1.6">
+        <b>⚠️ Comment utiliser :</b><br><br>
+        <b>Avant de changer de téléphone :</b><br>
+        1. Appuyez sur <b>Exporter</b><br>
+        2. Un fichier <b>MAC_Louga_sauvegarde.json</b> sera téléchargé<br>
+        3. Envoyez-le sur <b>WhatsApp</b> ou <b>email</b> pour le garder en sécurité<br><br>
+        <b>Sur le nouveau téléphone :</b><br>
+        1. Récupérez le fichier de sauvegarde<br>
+        2. Appuyez sur <b>Importer</b><br>
+        3. Sélectionnez le fichier — toutes vos données reviennent ✅
+      </div>
+    </div>
+  `;
+}
+
+function exporterDonnees(){
+  const data={
+    version:'1.0',
+    date: new Date().toISOString(),
+    detenus: DB.detenus,
+    txs: DB.txs
+  };
+  const json=JSON.stringify(data,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`MAC_Louga_sauvegarde_${new Date().toLocaleDateString('fr-SN').replace(/\//g,'-')}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('✓ Sauvegarde téléchargée !');
+}
+
+function importerDonnees(input){
+  const file=input.files[0];
+  if(!file){return;}
+  const reader=new FileReader();
+  reader.onload=async(e)=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.detenus||!data.txs){toast('Fichier invalide !','error');return;}
+      const ok=await confirm2(`Restaurer ${data.detenus.length} détenu(s) et ${data.txs.length} transaction(s) ?\n\nAttention : cela remplacera toutes les données actuelles.`);
+      if(!ok){input.value='';return;}
+      DB.detenus=data.detenus;
+      DB.txs=data.txs;
+      toast(`✓ ${data.detenus.length} détenu(s) restauré(s) !`);
+      navigate('dashboard');
+    }catch(err){
+      toast('Erreur de lecture du fichier','error');
+    }
+    input.value='';
+  };
+  reader.readAsText(file);
 }
 
 // ── Init ───────────────────────────────────────────────────────────────────────
